@@ -50,8 +50,13 @@ func CotacaoHandler(w http.ResponseWriter, r *http.Request) {
 
 	select {
 	case <-ctx.Done():
+		println("Request timeout")
 		w.WriteHeader(http.StatusRequestTimeout)
 		w.Write([]byte("Request timed out"))
+	case <-time.After(200 * time.Millisecond):
+		println("Internal server error")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Internal server error"))
 	default:
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
